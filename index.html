@@ -73,6 +73,15 @@ a{color:var(--accent-ink);text-decoration-thickness:1px;text-underline-offset:2p
 .badge.wait{background:var(--warn-soft);color:var(--warn-ink);}
 .badge.done{background:var(--good-soft);color:var(--good);}
 .badge.new{background:var(--accent-soft);color:var(--accent-ink);}
+.badge.sent{background:#e6e9f5;color:#3d4a86;}
+
+/* Кнопка «Сдать домашнюю работу» и отметка о сдаче */
+.links a.send{background:var(--accent-ink);color:#fff;}
+.send-hint{color:var(--muted);font-size:.84rem;margin:.45rem 0 0;}
+.submitted{background:#eef0f8;border-left:3px solid #3d4a86;border-radius:0 8px 8px 0;
+  padding:.7rem .95rem;margin:.7rem 0 .2rem;font-size:.93rem;color:#3d4a86;}
+.submitted .links{margin-top:.5rem;}
+.submitted .links a.send{background:#fff;color:#3d4a86;border:1px solid #c3cae6;}
 
 /* Переключатель «по датам / по темам».
    Сделан на радиокнопках и CSS, без JavaScript: страница ученика приходит
