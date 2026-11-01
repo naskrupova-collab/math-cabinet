@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Рома</title>
+<style>
+/* Оформление кабинета. Палитра и типографика — те же, что в листах занятий
+   и ДЗ (файлы в students, папки lessons и homework): менять здесь, а не
+   в сборщике. Файл вставляется в страницу инлайном, внешних ссылок и
+   шрифтов нет.
+   Внимание: внутри этого комментария не должно быть последовательности
+   «звёздочка + слэш» — она закрывает комментарий раньше времени и роняет
+   все стили ниже. Пути пишем словами. */
+
+:root{
+  --page:#eceeea; --paper:#fbfbf8; --ink:#202a2c; --muted:#57656a;
+  --accent:#0e6b66; --accent-ink:#0a4f4b; --accent-soft:#e1efee;
+  --warn:#a86617; --warn-ink:#8a5312; --warn-soft:#f8edda;
+  --good:#2f7d4f; --good-soft:#e3f0e7;
+  --stop-soft:#fdf1f0; --stop-ink:#9c4b43;
+  --rule:#dfe3df; --mark:#ffe7a1;
+  --serif:Georgia,'Iowan Old Style','Times New Roman',serif;
+  --sans:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);
+  font-size:clamp(16px,4.2vw,18px);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.sheet{max-width:760px;margin:1.4rem auto;background:var(--paper);
+  border:1px solid var(--rule);border-radius:14px;
+  box-shadow:0 10px 30px rgba(20,40,40,.08);padding:clamp(1.2rem,5vw,2.4rem);}
+
+.head{border-bottom:2px solid var(--ink);padding-bottom:.9rem;margin-bottom:1.2rem;}
+.lesson-no{font-family:var(--serif);font-size:clamp(1.4rem,6vw,2rem);font-weight:700;margin:0;}
+.topic{margin:.5rem 0 0;font-size:1.02rem;}
+.kicker{display:inline-block;margin:.8rem 0 0;font-size:.8rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--accent-ink);font-weight:600;}
+.hl{background:linear-gradient(transparent 58%,var(--mark) 58%);padding:0 .18em;}
+
+a{color:var(--accent-ink);text-decoration-thickness:1px;text-underline-offset:2px;}
+
+.nav{display:flex;gap:.5rem;flex-wrap:wrap;margin:0 0 1.2rem;}
+.nav a{display:inline-block;padding:.4rem .9rem;border:1px solid var(--rule);
+  border-radius:999px;background:#fff;text-decoration:none;font-size:.9rem;font-weight:600;}
+.nav a.on{background:var(--accent-ink);border-color:var(--accent-ink);color:#fff;}
+
+.intro{background:var(--accent-soft);border-radius:10px;padding:.85rem 1.1rem;
+  margin-bottom:1.2rem;font-size:.95rem;color:var(--accent-ink);}
+
+.blk-head{font-family:var(--serif);font-size:1.15rem;color:var(--accent-ink);
+  margin:2rem 0 .1rem;padding-bottom:.35rem;border-bottom:1px solid var(--rule);
+  display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;}
+.blk-head .tag{font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-family:var(--sans);}
+.blk-sub{color:var(--muted);font-size:.86rem;margin:.35rem 0 .2rem;}
+
+/* Лента занятий и ДЗ */
+.item{border:1px solid var(--rule);border-radius:12px;background:#fff;
+  padding:.9rem 1.15rem;margin:.9rem 0;}
+.item-head{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;}
+.item-date{font-family:var(--serif);font-weight:700;font-size:1.12rem;color:var(--accent-ink);}
+.item-kind{color:var(--muted);font-size:.9rem;}
+.item-topic{margin:.45rem 0 .5rem;font-size:1rem;}
+.links{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.3rem;}
+.links a{display:inline-block;padding:.35rem .8rem;border-radius:8px;
+  background:var(--accent-soft);text-decoration:none;font-size:.9rem;font-weight:600;}
+.links a.hw{background:var(--warn-soft);color:var(--warn-ink);}
+
+.badge{display:inline-block;padding:.12rem .55rem;border-radius:999px;
+  font-size:.74rem;letter-spacing:.03em;text-transform:uppercase;font-weight:700;}
+.badge.wait{background:var(--warn-soft);color:var(--warn-ink);}
+.badge.done{background:var(--good-soft);color:var(--good);}
+.badge.new{background:var(--accent-soft);color:var(--accent-ink);}
+.badge.sent{background:#e6e9f5;color:#3d4a86;}
+
+/* Кнопка «Сдать домашнюю работу» и отметка о сдаче */
+.links a.send{background:var(--accent-ink);color:#fff;}
+.send-hint{color:var(--muted);font-size:.84rem;margin:.45rem 0 0;}
+.submitted{background:#eef0f8;border-left:3px solid #3d4a86;border-radius:0 8px 8px 0;
+  padding:.7rem .95rem;margin:.7rem 0 .2rem;font-size:.93rem;color:#3d4a86;}
+.submitted .links{margin-top:.5rem;}
+.submitted .links a.send{background:#fff;color:#3d4a86;border:1px solid #c3cae6;}
+
+/* Переключатель «по датам / по темам».
+   Сделан на радиокнопках и CSS, без JavaScript: страница ученика приходит
+   зашифрованной и разворачивается уже в браузере, и скрипты внутри неё
+   запускаются не во всех случаях. CSS работает всегда. */
+.switch{display:none;}
+.tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin:1.2rem 0 .2rem;}
+.tabs label{display:inline-block;padding:.4rem .9rem;border:1px solid var(--rule);
+  border-radius:999px;background:#fff;font-size:.9rem;font-weight:600;cursor:pointer;
+  color:var(--accent-ink);user-select:none;}
+.tabs label:hover{border-color:var(--accent);}
+#by-date:checked ~ .tabs label[for="by-date"],
+#by-topic:checked ~ .tabs label[for="by-topic"]{
+  background:var(--accent-ink);border-color:var(--accent-ink);color:#fff;}
+.view{display:none;}
+#by-date:checked ~ .view-date,
+#by-topic:checked ~ .view-topic{display:block;}
+
+.group{margin:1.6rem 0 0;}
+.group-head{font-family:var(--serif);font-size:1.12rem;color:var(--accent-ink);
+  margin:0 0 .2rem;padding-bottom:.3rem;border-bottom:1px solid var(--rule);
+  display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;flex-wrap:wrap;}
+.group-head .count{font-family:var(--sans);font-size:.78rem;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--muted);font-weight:600;}
+
+/* Прогресс */
+.bar{display:flex;height:14px;border-radius:999px;overflow:hidden;margin:.9rem 0 .4rem;
+  border:1px solid var(--rule);background:#fff;}
+.bar span{display:block;}
+.bar .s-learned{background:var(--good);}
+.bar .s-first{background:#7ab98f;}
+.bar .s-progress{background:var(--warn);}
+.bar .s-not{background:#d8ddd8;}
+.legend{display:flex;gap:1rem;flex-wrap:wrap;font-size:.84rem;color:var(--muted);margin-bottom:1rem;}
+.legend i{display:inline-block;width:.7rem;height:.7rem;border-radius:3px;margin-right:.35rem;
+  vertical-align:baseline;}
+
+/* Раздел на странице прогресса: заголовок, процент, полоса */
+.sec{border:1px solid var(--rule);border-radius:12px;background:#fff;
+  padding:1rem 1.15rem;margin:1rem 0;}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;
+  gap:.6rem;flex-wrap:wrap;}
+.sec-title{font-family:var(--serif);font-size:1.14rem;font-weight:700;color:var(--ink);}
+.sec-pct{font-family:var(--serif);font-size:1.6rem;font-weight:700;color:var(--accent-ink);
+  line-height:1;}
+.sec-bar{height:10px;border-radius:999px;background:#e7eae7;overflow:hidden;margin:.65rem 0 .5rem;}
+.sec-bar span{display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,#7ab98f,var(--good));}
+.sec-meta{color:var(--muted);font-size:.86rem;}
+.sec details{margin-top:.6rem;}
+.sec summary{cursor:pointer;list-style:none;color:var(--accent-ink);font-weight:600;
+  font-size:.88rem;padding:.35rem 0;display:flex;align-items:center;gap:.5rem;}
+.sec summary::-webkit-details-marker{display:none;}
+.sec summary::before{content:"+";display:inline-grid;place-items:center;
+  width:1.2rem;height:1.2rem;border-radius:50%;border:1.5px solid var(--accent);
+  color:var(--accent);font-weight:700;font-size:.9rem;flex:none;}
+.sec details[open] summary::before{content:"\2013";}
+
+/* Учительский кабинет: карточка ученика */
+.pupil{border:1px solid var(--rule);border-radius:12px;background:#fff;
+  padding:1rem 1.15rem;margin:1rem 0;}
+.pupil-head{display:flex;align-items:baseline;justify-content:space-between;
+  gap:.6rem;flex-wrap:wrap;}
+.pupil-name{font-family:var(--serif);font-size:1.2rem;font-weight:700;}
+.pupil-goal{color:var(--muted);font-size:.88rem;margin:.35rem 0 .1rem;}
+.pupil-facts{display:flex;gap:1.3rem;flex-wrap:wrap;margin:.7rem 0 .2rem;}
+.pupil-facts div{font-size:.84rem;color:var(--muted);}
+.pupil-facts b{display:block;font-family:var(--serif);font-size:1.25rem;
+  color:var(--ink);line-height:1.25;}
+.pupil-facts b.warn{color:var(--warn-ink);}
+.creds{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;
+  background:var(--warn-soft);border-radius:8px;padding:.5rem .8rem;
+  margin:.7rem 0 .2rem;font-size:.86rem;color:var(--warn-ink);}
+.creds code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+  background:#fff;border:1px solid #e8d7b8;border-radius:6px;padding:.12rem .45rem;
+  font-size:.92em;user-select:all;}
+
+/* Итог сверху страницы прогресса */
+.total{background:var(--accent-soft);border-radius:12px;padding:1.1rem 1.25rem;margin:1.2rem 0;}
+.total-pct{font-family:var(--serif);font-size:2.6rem;font-weight:700;color:var(--accent-ink);
+  line-height:1;}
+.total-what{color:var(--accent-ink);font-size:.95rem;margin:.3rem 0 0;}
+.total-bar{height:12px;border-radius:999px;background:#fff;overflow:hidden;margin:.8rem 0 .5rem;}
+.total-bar span{display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,#7ab98f,var(--good));}
+
+.node{border:1px solid var(--rule);border-left-width:4px;border-radius:0 10px 10px 0;
+  background:#fff;padding:.75rem 1.05rem;margin:.6rem 0;}
+.node.learned{border-left-color:var(--good);}
+.node.first_success{border-left-color:#7ab98f;}
+.node.in_progress{border-left-color:var(--warn);}
+.node.not_started{border-left-color:#c9cfc9;}
+.node-head{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;}
+.node-title{font-weight:600;}
+.node-what{color:var(--muted);font-size:.86rem;margin:.3rem 0 0;}
+.node-what ul{margin:.3rem 0 0;padding-left:1.1rem;}
+
+/* Три условия правила 9 — компактной строкой, а не повторяющимся списком */
+.conds{display:flex;gap:.4rem;flex-wrap:wrap;margin:.5rem 0 0;}
+.cond{font-size:.78rem;padding:.2rem .6rem;border-radius:999px;border:1px solid var(--rule);
+  color:var(--muted);background:#fff;white-space:nowrap;}
+.cond.yes{border-color:#a8d0b6;background:var(--good-soft);color:var(--good);font-weight:600;}
+.cond.yes::before{content:"\2713\00a0";}
+.cond.no::before{content:"\00b7\00a0";}
+
+.stat{display:flex;gap:1.4rem;flex-wrap:wrap;margin:.6rem 0 0;}
+.stat div{font-size:.9rem;color:var(--muted);}
+.stat b{display:block;font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;}
+
+.odz{display:flex;gap:.6rem;align-items:flex-start;background:var(--good-soft);
+  border-radius:10px;padding:.85rem 1.05rem;margin-top:1.4rem;font-size:.95rem;}
+.note-empty{background:var(--warn-soft);border-left:3px solid var(--warn);
+  border-radius:0 8px 8px 0;padding:.75rem 1.05rem;color:var(--warn-ink);font-size:.93rem;}
+.foot{margin-top:1.4rem;padding-top:.9rem;border-top:1px solid var(--rule);
+  color:var(--muted);font-size:.82rem;}
+@media print{body{background:#fff;} .sheet{box-shadow:none;border:none;margin:0;max-width:none;}}
+
+.lock{max-width:420px;margin:15vh auto;}
+.lock form{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem;}
+.lock input{flex:1 1 12rem;font:inherit;padding:.6rem .9rem;border:1px solid var(--rule);
+  border-radius:10px;background:#fff;color:var(--ink);}
+.lock input:focus{outline:2px solid var(--accent);outline-offset:1px;}
+.lock button{font:inherit;font-weight:600;padding:.6rem 1.2rem;border:0;border-radius:10px;
+  background:var(--accent-ink);color:#fff;cursor:pointer;}
+.lock .err{color:var(--stop-ink);font-size:.92rem;margin:.7rem 0 0;min-height:1.3em;}
+</style>
+</head>
+<body>
+<div class="sheet lock">
+  <header class="head">
+    <p class="lesson-no">Рома</p>
+    <p class="topic">Страница защищена паролем</p>
+    <span class="kicker">личный кабинет</span>
+  </header>
+  <p class="blk-sub">Пароль выдаёт преподаватель. Вводить его нужно один раз —
+  дальше страница будет открываться сама.</p>
+  <form id="f" autocomplete="off">
+    <input id="p" type="password" placeholder="пароль" autocomplete="current-password"
+           autocapitalize="off" autocorrect="off" spellcheck="false" required>
+    <button type="submit">Открыть</button>
+  </form>
+  <p class="err" id="e"></p>
+</div>
+<script>
+(function(){
+  var D = {"salt":"LJU9HdCsHtjFaoSCD++Mqg==","iv":"Tzz3YQGKB3yTBBBM","data":"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","rounds":250000,"who":"roma-b2ay"};
+  var STORE = "tutor-key-" + D.who;
+  var form = document.getElementById("f");
+  var field = document.getElementById("p");
+  var note = document.getElementById("e");
+
+  function bytes(b64){
+    var raw = atob(b64), out = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+    return out;
+  }
+
+  if (!(window.crypto && window.crypto.subtle)) {
+    note.textContent = "Эта страница открывается только по ссылке сайта, " +
+      "не как файл на устройстве. Откройте ссылку, которую дал преподаватель.";
+    form.style.display = "none";
+    return;
+  }
+
+  function unlock(password, quiet){
+    var enc = new TextEncoder();
+    return crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveKey"])
+      .then(function(material){
+        return crypto.subtle.deriveKey(
+          {name:"PBKDF2", salt:bytes(D.salt), iterations:D.rounds, hash:"SHA-256"},
+          material, {name:"AES-GCM", length:256}, false, ["decrypt"]);
+      })
+      .then(function(key){
+        return crypto.subtle.decrypt({name:"AES-GCM", iv:bytes(D.iv)}, key, bytes(D.data));
+      })
+      .then(function(plain){
+        try { localStorage.setItem(STORE, password); } catch (e) {}
+        var page = new TextDecoder().decode(plain);
+        // Учительская сводка несёт внутри себя ключи от кабинетов учениц.
+        // Раскрыв её своим паролем, преподаватель получает доступ ко всем
+        // страницам сразу — дальше они открываются сами, без ввода пароля
+        // на каждой. Ключи лежат ВНУТРИ шифротекста, поэтому до ввода
+        // учительского пароля их в файле нет.
+        try {
+          var found = page.match(
+            /<script type="application\/json" id="tutor-keys">([\s\S]*?)<\/script>/);
+          if (found) {
+            var keys = JSON.parse(found[1]);
+            for (var slug in keys) {
+              localStorage.setItem("tutor-key-" + slug, keys[slug]);
+            }
+          }
+        } catch (e) {}
+        document.open(); document.write(page); document.close();
+      })
+      .catch(function(){
+        if (!quiet) {
+          note.textContent = "Пароль не подошёл. Проверьте раскладку и регистр.";
+          field.value = "";
+          field.focus();
+        } else {
+          try { localStorage.removeItem(STORE); } catch (e) {}
+        }
+      });
+  }
+
+  form.addEventListener("submit", function(event){
+    event.preventDefault();
+    note.textContent = "Открываю…";
+    unlock(field.value, false);
+  });
+
+  var saved = null;
+  try { saved = localStorage.getItem(STORE); } catch (e) {}
+  if (saved) { unlock(saved, true); } else { field.focus(); }
+})();
+</script>
+</body>
+</html>
